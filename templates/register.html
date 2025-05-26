@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>ChatApp - Kayıt Ol</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <h1>ChatApp</h1>
+        <h2>Kayıt Ol</h2>
+
+        <input type="text" id="register-username" placeholder="Kullanıcı adı">
+        <input type="password" id="register-password" placeholder="Şifre">
+        <input type="password" id="register-password-repeat" placeholder="Şifre (tekrar)">
+        <button onclick="register()">Kayıt Ol</button>
+
+        <p>Zaten üye misiniz? <a href="/">Giriş Yap</a></p>
+    </div>
+
+    <script>
+        function validatePassword(password) {
+            return password.length >= 6; // İstersen harf, sayı kontrolü ekleyebiliriz
+        }
+
+        function register() {
+            const username = document.getElementById("register-username").value;
+            const password = document.getElementById("register-password").value;
+            const repeat = document.getElementById("register-password-repeat").value;
+
+            if (password !== repeat) {
+                alert("Şifreler eşleşmiyor!");
+                return;
+            }
+
+            if (!validatePassword(password)) {
+                alert("Şifre en az 6 karakter olmalı.");
+                return;
+            }
+
+            fetch("/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.message) {
+                    alert("Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.");
+                    window.location.href = "/";
+                } else {
+                    alert(data.error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

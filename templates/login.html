@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>ChatApp - Giriş Yap</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <h1>ChatApp</h1>
+        <h2>Giriş Yap</h2>
+
+        <input type="text" id="login-username" placeholder="Kullanıcı adı">
+        <input type="password" id="login-password" placeholder="Şifre">
+        <button onclick="login()">Giriş Yap</button>
+
+        <p>Üye değil misiniz? <a href="/register">Kayıt Ol</a></p>
+    </div>
+
+    <script>
+        function login() {
+            const username = document.getElementById("login-username").value;
+            const password = document.getElementById("login-password").value;
+
+            fetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.token) {
+                    sessionStorage.setItem("token", data.token);
+                    sessionStorage.setItem("username", data.username);
+                    window.location.href = "/home";
+                } else {
+                    alert(data.error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
