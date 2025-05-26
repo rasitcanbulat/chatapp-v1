@@ -1,0 +1,17 @@
+# Python derleme dosyaları
+__pycache__/
+*.py[cod]
+
+# Sanal ortam klasörü
+.venv/
+
+# Ortam değişkenleri
+.env
+
+# IDE dosyaları
+.vscode/
+.idea/
+
+# Mac ve Windows çöp dosyaları
+.DS_Store
+Thumbs.db
