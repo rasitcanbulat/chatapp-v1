@@ -1,3 +1,6 @@
+/* ================================================
+🟢 GENEL STİLLER
+================================================= */
 body {
     background: #f2f2f2;
     font-family: Arial, sans-serif;
@@ -5,6 +8,9 @@ body {
     padding: 0;
 }
 
+/* ================================================
+🟢 GİRİŞ SAYFASI STİLLERİ
+================================================= */
 .login-container {
     width: 300px;
     margin: 80px auto;
@@ -31,13 +37,23 @@ body {
     border-radius: 5px;
 }
 
+/* ================================================
+🟢 ANA UYGULAMA DÜZENİ VE GENEL BİLEŞENLER
+================================================= */
 .navbar {
-    background-color: #007bff;
-    padding: 10px 20px;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    font-size: 18px;
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.logo {
+  height: 30px;
+  margin-left: 40px;
+  vertical-align: middle;
 }
 
 .main-container {
@@ -47,6 +63,14 @@ body {
     gap: 15px;
     overflow: hidden;
 }
+
+.username {
+    font-weight: bold;
+}
+
+/* ================================================
+🟢 PANEL STİLLERİ
+================================================= */
 
 /* Sol panel - Aktif kullanıcılar */
 .left-panel {
@@ -70,6 +94,73 @@ body {
     overflow: hidden;
 }
 
+/* Sağ panel - kullanıcı adı + buton */
+.right-panel {
+    width: 15%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.right-panel-box {
+  background-color: white;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  height: 615px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.poster-area {
+  margin: auto 0;
+  padding: 30px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.poster-img {
+  width: 100%;
+  max-width: 180px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.left-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.group-btn-inline {
+  background-color: #009688;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.group-btn-inline:hover {
+  background-color: #00796b;
+  transform: scale(1.05);
+}
+
+
+/* ================================================
+🟢 SOHBET PENCERESİ VE MESAJ GİRDİSİ STİLLERİ
+================================================= */
 .chat-window {
     flex: 1;
     overflow-y: auto;
@@ -77,7 +168,54 @@ body {
     border: 1px solid #eee;
     border-radius: 5px;
     margin-bottom: 10px;
+    display: flex; /* İçindeki mesajları düzenlemek için flexbox kullanır */
+    flex-direction: column; /* Mesajların dikeyde sıralanmasını sağlar */
+    height: 100%; /* chat-window'un ebeveynine göre tam yüksekliği almasını sağlar */
 }
+
+.message-input {
+    display: flex;
+    gap: 10px;
+}
+
+.message-input input {
+    flex: 1;
+    padding: 8px;
+}
+
+.message-input button {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+/* Mesaj baloncuğu stilleri */
+.message-left {
+    text-align: left;
+    margin: 5px;
+    padding: 8px 12px;
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    max-width: 60%;
+    align-self: flex-start; /* Mesajı sola hizalar */
+}
+
+.message-right {
+    text-align: right;
+    margin: 5px;
+    padding: 8px 12px;
+    background-color: #dcf8c6;
+    border-radius: 10px;
+    max-width: 60%;
+    align-self: flex-end; /* Mesajı sağa hizalar */
+    margin-left: auto; /* Sağ hizalamayı pekiştirir */
+}
+
+/* ================================================
+🟢 GRUP YÖNETİMİ STİLLERİ
+================================================= */
 
 /* Grup listesi */
 .group-list {
@@ -98,22 +236,13 @@ body {
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.2s ease;
+    display: flex; /* İçindeki elemanları hizalamak için */
+    align-items: center; /* Dikeyde ortalamak için */
+    justify-content: space-between; /* Metin ve X butonu arasını açmak için */
 }
 
 .group-item:hover {
     background-color: #e6e6e6;
-}
-
-/* Sağ panel - kullanıcı adı + buton */
-.right-panel {
-    width: 15%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.username {
-    font-weight: bold;
 }
 
 /* Grup oluştur butonu */
@@ -124,16 +253,25 @@ body {
 }
 
 .group-create-button button {
-    padding: 12px;
-    font-size: 16px;
-    background: green;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
+  background-color: #009688;
+  color: white;
+  padding: 10px 20px;
+  font-weight: bold;
+  font-size: 15px;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s;
 }
 
-/* Modal stilleri */
+.group-create-button button:hover {
+  background-color: #00796b;
+  transform: scale(1.05);
+}
+
+
+/* Grup Oluşturma Modalı */
 .modal {
     display: none;
     position: fixed;
@@ -152,9 +290,10 @@ body {
     width: 400px;
     border-radius: 8px;
     position: relative;
+    text-align: center; /* İçerideki öğeleri ortalamak için */
 }
 
-.modal-content .close {
+.modal-content .close-button { /* HTML'de close-button sınıfı kullanıldığı için */
     position: absolute;
     top: 10px;
     right: 15px;
@@ -162,40 +301,41 @@ body {
     cursor: pointer;
 }
 
-#chat-window {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+/* ================================================
+🟢 SESLİ ARAMA (WEBRTC) STİLLERİ
+================================================= */
+.voice-call-container {
+    display: none; /* Varsayılan olarak gizli */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    text-align: center;
 }
-
-#messages {
-    flex: 1;
-    overflow-y: auto;
-    margin-bottom: 10px;
-}
-
-.message-input {
-    display: flex;
-    gap: 10px;
-}
-
-.message-input input {
-    flex: 1;
-    padding: 8px;
-}
-
-.message-input button {
-    padding: 8px 16px;
-    background-color: #007bff;
-    color: white;
+.voice-call-container button {
+    margin: 5px;
+    padding: 8px 15px;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
+    font-size: 14px;
 }
+.voice-call-container #call-accept-button { background-color: #4CAF50; color: white; }
+.voice-call-container #call-reject-button { background-color: #f44336; color: white; }
+.voice-call-container #hangup-call-button { background-color: #f44336; color: white; }
 
+/* ================================================
+🟢 BUTON STİLLERİ
+================================================= */
 .call-button {
     margin-left: 10px;
     padding: 6px 12px;
-    background-color: #007bff;
+    background-color: white;
     color: white;
     border: none;
     border-radius: 6px;
@@ -205,20 +345,22 @@ body {
 }
 
 .call-button:hover {
-    background-color: #0056b3;
+    background-color: #4CAF50;;
 }
 
+/* Kullanıcı öğesi içindeki arama butonu */
 .user-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: #403e3e;
+    background-color: #f0f0f0; /* Açık renk ayarlandı, orijinal kodda #403e3e idi */
     padding: 8px 12px;
     margin-bottom: 6px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 500;
     transition: background-color 0.2s ease;
+    color: #333; /* Metin rengi ayarlandı */
 }
 
 .user-item:hover {
@@ -226,7 +368,7 @@ body {
 }
 
 .user-item .call-button {
-    background-color: #007bff;
+    background-color: #4CAF50;;
     color: white;
     border: none;
     border-radius: 6px;
@@ -236,4 +378,50 @@ body {
     margin-left: 10px;
 }
 
+.user-info button {
+  background-color: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.user-info button:hover {
+  background-color: #d32f2f;
+}
+
+.call-history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.call-history-list li {
+  padding: 8px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.call-history-button {
+  margin-top: 10px;
+  background-color: #2196F3; /* Mavi ton */
+  color: white;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  width: 100%;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.call-history-button:hover {
+  background-color: #1976D2;
+  transform: scale(1.03);
+}
 
