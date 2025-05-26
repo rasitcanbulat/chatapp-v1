@@ -3,56 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <title>ChatApp - Kayıt Ol</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<style>
+  body {
+  margin: 0;
+  padding: 0;
+  background-color: #f7f7f7;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.login-container {
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
+.side-poster img {
+  max-height: 500px;
+  margin: 20px;
+  border-radius: 12px;
+}
+
+.login-box {
+  background-color: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-logo {
+  width: 220px;
+  margin-bottom: 20px;
+}
+
+.login-box h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.login-btn {
+  width: 100%;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  margin-top: 15px;
+  cursor: pointer;
+}
+
+.login-btn:hover {
+  background-color: #388E3C;
+}
+</style>
 </head>
 <body>
-    <div class="login-container">
-        <h1>ChatApp</h1>
-        <h2>Kayıt Ol</h2>
-
-        <input type="text" id="register-username" placeholder="Kullanıcı adı">
-        <input type="password" id="register-password" placeholder="Şifre">
-        <input type="password" id="register-password-repeat" placeholder="Şifre (tekrar)">
-        <button onclick="register()">Kayıt Ol</button>
-
-        <p>Zaten üye misiniz? <a href="/">Giriş Yap</a></p>
+  <div class="login-container">
+    
+    <!-- Sol poster -->
+    <div class="side-poster">
+      <img src="/static/left.png" alt="Sol Poster">
     </div>
 
-    <script>
-        function validatePassword(password) {
-            return password.length >= 6; // İstersen harf, sayı kontrolü ekleyebiliriz
+    <!-- Ortadaki kayıt kutusu -->
+    <div class="login-box">
+      <img src="/static/logo.png" alt="Logo" class="login-logo">
+      <h2>Kayıt Ol</h2>
+
+      <input type="text" id="register-username" placeholder="Kullanıcı adı">
+      <input type="password" id="register-password" placeholder="Şifre">
+      <input type="password" id="register-password-repeat" placeholder="Şifre (tekrar)">
+      <button onclick="register()" class="login-btn">Kayıt Ol</button>
+
+      <p>Zaten üye misiniz? <a href="/">Giriş Yap</a></p>
+    </div>
+
+    <!-- Sağ poster -->
+    <div class="side-poster">
+      <img src="/static/right.png" alt="Sağ Poster">
+    </div>
+
+  </div>
+
+  <script>
+    function validatePassword(password) {
+      return password.length >= 6;
+    }
+
+    function register() {
+      const username = document.getElementById("register-username").value;
+      const password = document.getElementById("register-password").value;
+      const repeat = document.getElementById("register-password-repeat").value;
+
+      if (password !== repeat) {
+        alert("Şifreler eşleşmiyor!");
+        return;
+      }
+
+      if (!validatePassword(password)) {
+        alert("Şifre en az 6 karakter olmalı.");
+        return;
+      }
+
+      fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.message) {
+          alert("Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.");
+          window.location.href = "/";
+        } else {
+          alert(data.error);
         }
-
-        function register() {
-            const username = document.getElementById("register-username").value;
-            const password = document.getElementById("register-password").value;
-            const repeat = document.getElementById("register-password-repeat").value;
-
-            if (password !== repeat) {
-                alert("Şifreler eşleşmiyor!");
-                return;
-            }
-
-            if (!validatePassword(password)) {
-                alert("Şifre en az 6 karakter olmalı.");
-                return;
-            }
-
-            fetch("/api/auth/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.message) {
-                    alert("Kayıt başarılı! Giriş ekranına yönlendiriliyorsunuz.");
-                    window.location.href = "/";
-                } else {
-                    alert(data.error);
-                }
-            });
-        }
-    </script>
+      });
+    }
+  </script>
 </body>
 </html>
