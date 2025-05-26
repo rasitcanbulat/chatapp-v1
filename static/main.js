@@ -740,4 +740,3 @@ socket.on("call-ended", (data) => {
         endCall();
     }, 2000); // Kısa bir gecikme ile çağrıyı sonlandır
 });
-

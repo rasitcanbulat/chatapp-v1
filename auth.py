@@ -3,9 +3,16 @@ import bcrypt
 import jwt
 import uuid
 
+# ================================
+# 🧩 Blueprint Oluşturucu
+# ================================
+
 def create_auth_blueprint(mysql, active_users):
     auth_bp = Blueprint('auth', __name__)
 
+    # ================================
+    # 📝 Kayıt Olma (POST /register)
+    # ================================
     @auth_bp.route('/register', methods=['POST'])
     def register():
         data = request.json
@@ -25,13 +32,18 @@ def create_auth_blueprint(mysql, active_users):
         hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         user_uuid = str(uuid.uuid4())
 
-        cursor.execute("INSERT INTO users (uuid, username, password) VALUES (%s, %s, %s)",
-                       (user_uuid, username, hashed))
+        cursor.execute(
+            "INSERT INTO users (uuid, username, password) VALUES (%s, %s, %s)",
+            (user_uuid, username, hashed)
+        )
         mysql.connection.commit()
         cursor.close()
 
         return jsonify({"message": "Kayıt başarılı", "uuid": user_uuid}), 201
 
+    # ================================
+    # 🔑 Giriş Yapma (POST /login)
+    # ================================
     @auth_bp.route('/login', methods=['POST'])
     def login():
         data = request.json
@@ -48,11 +60,22 @@ def create_auth_blueprint(mysql, active_users):
         if not bcrypt.checkpw(password.encode('utf-8'), user[3].encode('utf-8')):
             return jsonify({"error": "Parola hatalı"}), 401
 
-        token = jwt.encode({"uuid": user[1]}, current_app.config["SECRET_KEY"], algorithm="HS256")
+        token = jwt.encode(
+            {"uuid": user[1]},
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256"
+        )
 
         # ➕ Aktif kullanıcı listesine ekle
         active_users.add(user[2])  # user[2] = username
 
-        return jsonify({"token": token, "uuid": user[1], "username": user[2]}), 200
+        return jsonify({
+            "token": token,
+            "uuid": user[1],
+            "username": user[2]
+        }), 200
 
+    # ================================
+    # 🔁 Blueprint Return
+    # ================================
     return auth_bp

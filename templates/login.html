@@ -81,9 +81,9 @@
     <div class="login-box">
       <img src="/static/logo.png" alt="Logo" class="login-logo">
       <h2>Giriş Yap</h2>
-      <input type="text" placeholder="Kullanıcı adı">
-      <input type="password" placeholder="Şifre">
-      <button class="login-btn">Giriş Yap</button>
+      <input type="text" id="login-username" placeholder="Kullanıcı adı">
+      <input type="password" id="login-password" placeholder="Şifre">
+      <button onclick="login()" class="login-btn">Giriş Yap</button>
       <p>Üye değil misiniz? <a href="/register">Kayıt Ol</a></p>
     </div>
 
@@ -94,27 +94,33 @@
   </div>
 
     <script>
-        function login() {
-            const username = document.getElementById("login-username").value;
-            const password = document.getElementById("login-password").value;
+  function login() {
+    const username = document.getElementById("login-username").value;
+    const password = document.getElementById("login-password").value;
 
-            fetch("/api/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.token) {
-                    sessionStorage.setItem("token", data.token);
-                    sessionStorage.setItem("username", data.username);
-                    window.location.href = "/home";
-                } else {
-                    alert(data.error);
-                }
-            });
-        }
-    </script>
+    if (!username || !password) {
+      alert("Kullanıcı adı ve şifre girin.");
+      return;
+    }
+
+    fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, password })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.token) {
+        sessionStorage.setItem("token", data.token);
+        sessionStorage.setItem("username", data.username);
+        window.location.href = "/home";
+      } else {
+        alert(data.error || "Giriş başarısız.");
+      }
+    });
+  }
+</script>
+
 
 </body>
 </html>
