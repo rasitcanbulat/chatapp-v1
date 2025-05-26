@@ -398,16 +398,30 @@ def handle_call_ended(data):
 
 @app.route("/api/messages/private/<user1>/<user2>")
 def get_private_messages(user1, user2):
-    cursor = mysql.connection.cursor()
     room_name = f"{min(user1, user2)}-{max(user1, user2)}"
-    cursor.execute("SELECT sender, message, timestamp FROM messages WHERE room = %s ORDER BY timestamp ASC", (room_name,))
+    cursor = mysql.connection.cursor()
+
+    # 1. Mesajları çek
+    cursor.execute("SELECT id, sender, message, timestamp, is_read FROM messages WHERE room = %s ORDER BY timestamp ASC", (room_name,))
     rows = cursor.fetchall()
+
+    # 2. Okunmamış karşı taraf mesajlarını işaretle
+    cursor.execute("""
+        UPDATE messages 
+        SET is_read = TRUE 
+        WHERE room = %s AND sender = %s AND is_read = FALSE
+    """, (room_name, user2))  # user2 gönderici ise okundu sayılır
+
+    mysql.connection.commit()
     cursor.close()
+
     return jsonify([
         {
-            "sender": r[0],
-            "message": r[1],
-            "timestamp": r[2].strftime("%H:%M")
+            "id": r[0],
+            "sender": r[1],
+            "message": r[2],
+            "timestamp": r[3].strftime("%H:%M"),
+            "is_read": r[4]
         } for r in rows
     ])
 

@@ -159,13 +159,40 @@
         }
 
         function openPrivateChat(username) {
-            currentChatUser = username;
-            currentChatGroup = null; // Grup sohbetini kapat
-            document.getElementById("chat-window").innerHTML = `<h2>${username} ile Özel Sohbet</h2>`;
-            fetch(`/api/messages/private/${currentUser}/${username}`)
+    currentChatUser = username;
+    currentChatGroup = null;
+    document.getElementById("chat-window").innerHTML = `<h2>${username} ile Özel Sohbet</h2>`;
+
+    fetch(`/api/messages/private/${currentUser}/${username}`)
         .then(res => res.json())
         .then(messages => {
             const chatWindow = document.getElementById("chat-window");
+            messages.forEach(msg => {
+                const p = document.createElement("p");
+                p.id = `msg-${msg.id}`;
+                let readMark = "";
+                if (msg.sender === currentUser) {
+                    readMark = msg.is_read ? " ✓✓" : " ✓";
+                }
+                p.innerText = `[${msg.sender} - ${msg.timestamp}]: ${msg.message}${readMark}`;
+                chatWindow.appendChild(p);
+            });
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        });
+}
+
+
+
+        function openGroupChat(groupName) {
+    currentChatGroup = groupName;
+    currentChatUser = null; // Özel sohbeti kapat
+    const chatWindow = document.getElementById("chat-window");
+    chatWindow.innerHTML = `<h2>${groupName} Sohbeti</h2>`;
+
+    // Grup geçmişini getir
+    fetch(`/api/messages/group/${groupName}`)
+        .then(res => res.json())
+        .then(messages => {
             messages.forEach(msg => {
                 const p = document.createElement("p");
                 p.innerText = `[${msg.sender} - ${msg.timestamp}]: ${msg.message}`;
@@ -173,26 +200,8 @@
             });
             chatWindow.scrollTop = chatWindow.scrollHeight;
         });
-        }
+}
 
-        function openGroupChat(groupName) {
-            currentChatGroup = groupName;
-            currentChatUser = null; // Özel sohbeti kapat
-            const chatWindow = document.getElementById("chat-window");
-            chatWindow.innerHTML = `<h2>${groupName} Sohbeti</h2>`;
-
-            // Grup geçmişini getir
-            fetch(`/api/messages/group/${groupName}`)
-                .then(res => res.json())
-                .then(messages => {
-                    messages.forEach(msg => {
-                        const p = document.createElement("p");
-                        p.innerText = `[${msg.sender} - ${msg.timestamp}]: ${msg.message}`;
-                        chatWindow.appendChild(p);
-                    });
-                    chatWindow.scrollTop = chatWindow.scrollHeight;
-                });
-        }
 
         function renderGroupItem(groupName, isOwner) {
             const groupList = document.getElementById("group-list");
