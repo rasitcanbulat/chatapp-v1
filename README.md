@@ -145,11 +145,4 @@ Uygulama şurada çalışacaktır: [http://localhost:5000](http://localhost:5000
 
 ## 👨‍💻 Geliştirici
 
-Bu proje, **[@rasitcanbulat](https://github.com/rasitcanbulat)** tarafından geliştirilmiştir.
-
----
-
-## 🏁 Durum
-
-📌 Proje YBS406 dönem projesi yönergesine %100 uyumludur.  
-Mesajlaşma, sesli arama, kimlik doğrulama, güvenlik, E2EE ve 2FA eksiksiz olarak uygulanmıştır.
+Bu proje, **[@rasitcanbulat](https://www.linkedin.com/in/rasitcanbulat/)** tarafından geliştirilmiştir.
