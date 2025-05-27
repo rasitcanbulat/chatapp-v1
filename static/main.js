@@ -1,3 +1,17 @@
+// Ortak gizli anahtar (örnek)
+const SECRET_KEY = "J38sdf9h1!ks8LD$Xxk09g1h2@w9sdf1kq";
+
+// AES ile şifreleme
+function encryptMessage(message) {
+    return CryptoJS.AES.encrypt(message, SECRET_KEY).toString();
+}
+
+// AES ile çözme
+function decryptMessage(encrypted) {
+    const bytes = CryptoJS.AES.decrypt(encrypted, SECRET_KEY);
+    return bytes.toString(CryptoJS.enc.Utf8);
+}
+
 /* ================================================
 🟢 GLOBAL DEĞİŞKENLER VE BAŞLANGIÇ AYARLARI
 ================================================= */
@@ -31,7 +45,6 @@ function loadHome() {
   fetchActiveUsers();
   loadUserGroups();
 }
-
 
 
 /* ================================================
@@ -81,7 +94,12 @@ function updateUserList(users) {
 function openPrivateChat(username) {
     currentChatUser = username;
     currentChatGroup = null;
-    document.getElementById("chat-window").innerHTML = `<h2>${username} ile Özel Sohbet</h2>`;
+    document.getElementById("chat-window").innerHTML = `
+        <h2>${username} ile Özel Sohbet</h2>
+        <p style="font-size: 13px; color: gray; margin-top: -10px; margin-bottom: 15px;">
+            🔐 Bu sohbet uçtan uca şifreleme ile korunmaktadır.
+        </p>
+    `;
 
     fetch(`/api/messages/private/${currentUser}/${username}`)
         .then(res => res.json())
@@ -90,8 +108,6 @@ function openPrivateChat(username) {
             messages.forEach(msg => {
                 const p = document.createElement("p");
                 p.id = `msg-${msg.id}`;
-
-                // ✅ Mesaj sahibine göre stil belirle
                 p.className = msg.sender === currentUser ? "message-right" : "message-left";
 
                 let readMark = "";
@@ -99,7 +115,9 @@ function openPrivateChat(username) {
                     readMark = msg.is_read ? " ✅✅" : " ✅";
                 }
 
-                p.innerText = `[${msg.sender} - ${msg.timestamp}]: ${msg.message}${readMark}`;
+                const decrypted = decryptMessage(msg.message);
+                console.log("🔓 Çözülmüş mesaj:", decrypted);
+                p.innerText = `[${msg.sender} - ${msg.timestamp}]: ${decrypted}${readMark}`;
                 chatWindow.appendChild(p);
             });
             chatWindow.scrollTop = chatWindow.scrollHeight;
@@ -165,20 +183,22 @@ function renderGroupItem(groupName, isOwner) {
 // Mesaj gönderme işlemini yürütür
 function sendMessage() {
     const messageInput = document.getElementById("message-input-field");
-    const message = messageInput.value;
-    if (message.trim() === "") return;
+    const rawMessage = messageInput.value;
+    if (rawMessage.trim() === "") return;
+
+    const encryptedMessage = encryptMessage(rawMessage);
 
     const chatWindow = document.getElementById("chat-window");
 
     const p = document.createElement("p");
     p.className = "message-right";
-    p.innerText = `[${currentUser}]: ${message}`;
+    p.innerText = `[${currentUser}]: ${rawMessage}`; 
     chatWindow.appendChild(p);
 
     if (currentChatUser) {
-        socket.emit("private_message", { to: currentChatUser, message: message });
+        socket.emit("private_message", { to: currentChatUser, message: encryptedMessage });
     } else if (currentChatGroup) {
-        socket.emit("group_message", { group: currentChatGroup, message: message });
+        socket.emit("group_message", { group: currentChatGroup, message: encryptedMessage });
     } else {
         alert("Sohbet etmek için bir kullanıcı veya grup seçin!");
     }
@@ -186,6 +206,7 @@ function sendMessage() {
     messageInput.value = "";
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
+
 
 
 // Kullanıcının oturumunu kapatır
@@ -307,7 +328,10 @@ socket.on('private_message', (data) => {
     if (currentChatUser === data.from) {
         const p = document.createElement("p");
         p.className = "message-left";
-        p.innerText = `[${data.from}]: ${data.message}`;
+
+        const decrypted = decryptMessage(data.message);
+
+        p.innerText = `[${data.from}]: ${decrypted}`;
         chatWindow.appendChild(p);
         chatWindow.scrollTop = chatWindow.scrollHeight;
     } else {
@@ -320,15 +344,19 @@ socket.on('private_message', (data) => {
 socket.on('group_message', (data) => {
     console.log('Grup Mesajı alındı:', data);
     const chatWindow = document.getElementById("chat-window");
+
     if (currentChatGroup === data.group) {
+        const decrypted = decryptMessage(data.message);
+
         const p = document.createElement("p");
-        p.innerText = `[${data.group} - ${data.from}]: ${data.message}`;
+        p.innerText = `[${data.group} - ${data.from}]: ${decrypted}`;
         chatWindow.appendChild(p);
         chatWindow.scrollTop = chatWindow.scrollHeight;
     } else {
-        alert(`Yeni grup mesajı var: ${data.group} - ${data.from}`); // Bildirim göster
+        alert(`Yeni grup mesajı var: ${data.group} - ${data.from}`);
     }
 });
+
 
 // Bir grup silindiğinde tetiklenir
 socket.on("group_deleted", (data) => {
