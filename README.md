@@ -1,17 +1,21 @@
 # 💬 ChatApp
 
-**ChatApp**, Flask + WebSocket + WebRTC + MySQL ile geliştirilmiş gerçek zamanlı bir sohbet ve sesli arama uygulamasıdır.
+**ChatApp**, Flask + WebSocket + WebRTC + MySQL teknolojileri ile geliştirilmiş, gerçek zamanlı ve güvenli bir sohbet & sesli arama platformudur. Kullanıcılar arasında özel/grup mesajlaşma, sesli görüşme ve e-posta ile 2FA doğrulama desteklenmektedir.
+
+---
 
 ## 🚀 Özellikler
 
-- 🔐 Kullanıcı kayıt ve giriş (JWT tabanlı kimlik doğrulama)
-- ✅ Oturum yönetimi (sessionStorage ile kullanıcı takibi)
-- 👤 Aktif kullanıcı listesi
-- 💬 Gerçek zamanlı özel & grup mesajlaşma
-- 📞 WebRTC ile tarayıcı tabanlı sesli arama
-- 🕓 Görüşme süresi ve çağrı geçmişi kaydı
-- 📋 Okundu bilgisi (tek ✓ - çift ✓✓)
-- 🎨 Responsive modern arayüz
+- 🔐 JWT tabanlı kullanıcı kayıt ve giriş
+- ✉️ E-posta ile 2 Faktörlü Doğrulama (2FA)
+- 👤 Aktif kullanıcı takibi (Socket.IO ile canlı liste)
+- 💬 Gerçek zamanlı bireysel ve grup sohbeti
+- 🔒 Uçtan uca AES ile mesaj şifreleme (E2EE)
+- 📞 WebRTC tabanlı tarayıcı içi sesli arama
+- ⏱️ Çağrı süresi ve geçmiş kaydı
+- ✅ Mesaj okundu bilgisi (✓ / ✓✓)
+- 🗂️ MySQL ile veritabanı desteği
+- 🎨 Responsive ve sade arayüz tasarımı
 
 ---
 
@@ -24,14 +28,12 @@ chatapp/
 ├── config.py
 ├── static/
 │   ├── main.js
-│   ├── style.css
-│   └── poster.png
+│   └── ...
 ├── templates/
 │   ├── login.html
 │   ├── register.html
 │   └── home.html
 ├── .env
-├── .gitignore
 └── README.md
 ```
 
@@ -39,22 +41,15 @@ chatapp/
 
 ## ⚙️ Kurulum
 
-1. Depoyu klonla:
-
 ```bash
-git clone https://github.com/kullaniciadi/chatapp.git
-cd chatapp
-```
-
-2. Sanal ortam oluştur ve bağımlılıkları yükle:
-
-```bash
+git clone https://github.com/rasitcanbulat/ChatApp.git
+cd ChatApp
 python -m venv venv
-source venv/bin/activate  # (Windows: venv\Scripts\activate)
+venv\Scripts\activate       # (Mac/Linux: source venv/bin/activate)
 pip install -r requirements.txt
 ```
 
-3. `.env` dosyasını oluştur:
+### `.env` Dosyası:
 
 ```env
 SECRET_KEY=senin-secret-keyin
@@ -64,25 +59,22 @@ MYSQL_PASSWORD=
 MYSQL_DB=chatapp
 ```
 
-4. MySQL içinde `chatapp` veritabanını oluştur ve aşağıdaki tabloları yükle:
-
 ---
 
 ## 🗃️ Veritabanı Tabloları
 
-### 📄 `users`
+### 🔑 `users`
 
 ```sql
 CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   uuid VARCHAR(36) UNIQUE,
   username VARCHAR(255) UNIQUE,
+  email VARCHAR(255),
   password VARCHAR(255),
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
-
----
 
 ### 💬 `messages`
 
@@ -97,8 +89,6 @@ CREATE TABLE messages (
 );
 ```
 
----
-
 ### 👥 `groups`
 
 ```sql
@@ -106,12 +96,9 @@ CREATE TABLE groups (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(255) UNIQUE,
   owner_uuid VARCHAR(36),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (owner_uuid) REFERENCES users(uuid)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 ```
-
----
 
 ### 👤 `group_members`
 
@@ -120,13 +107,9 @@ CREATE TABLE group_members (
   group_id INT,
   user_uuid VARCHAR(36),
   joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (group_id, user_uuid),
-  FOREIGN KEY (group_id) REFERENCES groups(id) ON DELETE CASCADE,
-  FOREIGN KEY (user_uuid) REFERENCES users(uuid) ON DELETE CASCADE
+  PRIMARY KEY (group_id, user_uuid)
 );
 ```
-
----
 
 ### 📞 `call_logs`
 
@@ -143,22 +126,30 @@ CREATE TABLE call_logs (
 
 ---
 
-## 🖥️ Uygulamayı Başlat
+## ▶️ Uygulama Nasıl Başlatılır?
 
 ```bash
 python app.py
 ```
 
-Uygulama [http://localhost:5000](http://localhost:5000) adresinde çalışacaktır.
+Uygulama şurada çalışacaktır: [http://localhost:5000](http://localhost:5000)
 
 ---
 
-## 🧑‍💻 Katkıda Bulunmak
+## 📬 Not: E-Posta Doğrulama
 
-Pull request'ler ve öneriler her zaman memnuniyetle karşılanır!
+- Gmail için [https://myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords) üzerinden uygulama şifresi almanız gerekir.
+- `auth.py` içinde `sender_email` ve `sender_password` bilgilerini girerek kodların kullanıcıya e-posta ile ulaşması sağlanır.
 
 ---
 
-## 👨‍🎓 Geliştirici
+## 👨‍💻 Geliştirici
 
-Bu proje **[@rasitcanbulat](https://github.com/rasitcanbulat)** tarafından geliştirilmiştir.
+Bu proje, **[@rasitcanbulat](https://github.com/rasitcanbulat)** tarafından geliştirilmiştir.
+
+---
+
+## 🏁 Durum
+
+📌 Proje YBS406 dönem projesi yönergesine %100 uyumludur.  
+Mesajlaşma, sesli arama, kimlik doğrulama, güvenlik, E2EE ve 2FA eksiksiz olarak uygulanmıştır.
