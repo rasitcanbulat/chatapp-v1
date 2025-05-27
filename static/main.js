@@ -44,8 +44,16 @@ function loadHome() {
 
   fetchActiveUsers();
   loadUserGroups();
-}
 
+  // ✅ ENTER tuşuyla mesaj gönder
+  const input = document.getElementById("message-input-field");
+  input.addEventListener("keydown", function (event) {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+}
 
 /* ================================================
 🟢 KULLANICI VE GRUP YÖNETİMİ FONKSİYONLARI
@@ -207,8 +215,6 @@ function sendMessage() {
     messageInput.value = "";
     chatWindow.scrollTop = chatWindow.scrollHeight;
 }
-
-
 
 // Kullanıcının oturumunu kapatır
 function logout() {
