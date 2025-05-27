@@ -68,6 +68,22 @@
 .login-btn:hover {
   background-color: #388E3C;
 }
+
+#2fa-section input {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.verify-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
 </style>    
 </head>
 <body>
@@ -86,7 +102,14 @@
       <input type="password" id="login-password" placeholder="Şifre">
       <button onclick="login()" class="login-btn">Giriş Yap</button>
       <p>Üye değil misiniz? <a href="/register">Kayıt Ol</a></p>
+
+      <div id="2fa-section" style="display:none; margin-top: 25px; width: 100%;">
+      <h3 style="margin-bottom: 10px;">Doğrulama Kodu</h3>
+      <input type="text" id="verification-code" placeholder="6 haneli kod" class="verify-input">
+      <p style="font-size: 14px; color: #555; margin: 8px 0 16px;">E-posta adresinize gönderilen 6 haneli kodu giriniz.</p>
+      <button onclick="verifyCode()" class="login-btn">Kodu Doğrula</button>
     </div>
+  </div>
 
     <!-- Sağ poster -->
     <div class="side-poster">
@@ -96,30 +119,52 @@
 
     <script>
   function login() {
-    const username = document.getElementById("login-username").value;
-    const password = document.getElementById("login-password").value;
+  const username = document.getElementById("login-username").value;
+  const password = document.getElementById("login-password").value;
 
-    if (!username || !password) {
-      alert("Kullanıcı adı ve şifre girin.");
-      return;
-    }
-
-    fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.token) {
-        sessionStorage.setItem("token", data.token);
-        sessionStorage.setItem("username", data.username);
-        window.location.href = "/home";
-      } else {
-        alert(data.error || "Giriş başarısız.");
-      }
-    });
+  if (!username || !password) {
+    alert("Kullanıcı adı ve şifre girin.");
+    return;
   }
+
+  fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.message === "Kod gönderildi") {
+      // ✅ 2FA ekranına geç
+      sessionStorage.setItem("tempUser", username);
+      document.getElementById("2fa-section").style.display = "block";
+    } else {
+      alert(data.error || "Giriş başarısız.");
+    }
+  });
+}
+
+function verifyCode() {
+  const username = sessionStorage.getItem("tempUser");
+  const code = document.getElementById("verification-code").value;
+
+  fetch("/api/auth/verify-code", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, code })
+  })
+  .then(res => res.json())
+  .then(data => {
+    if (data.token) {
+      sessionStorage.setItem("token", data.token);
+      sessionStorage.setItem("username", data.username);
+      window.location.href = "/home";
+    } else {
+      alert(data.error || "Kod doğrulama başarısız.");
+    }
+  });
+}
+
 </script>
 
 

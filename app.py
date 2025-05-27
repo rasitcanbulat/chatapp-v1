@@ -1,5 +1,3 @@
-# app.py (Düzenlenmiş ve Bölümlendirilmiş)
-
 from flask import Flask, render_template, jsonify, request
 from flask_cors import CORS
 from flask_mysqldb import MySQL

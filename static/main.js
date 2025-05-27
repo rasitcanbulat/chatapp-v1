@@ -144,7 +144,8 @@ function openGroupChat(groupName) {
         .then(messages => {
             messages.forEach(msg => {
                 const p = document.createElement("p");
-                p.innerText = `[${msg.sender} - ${msg.timestamp}]: ${msg.message}`;
+                const decrypted = decryptMessage(msg.message);
+                p.innerText = `[${msg.sender} - ${msg.timestamp}]: ${decrypted}`;
                 chatWindow.appendChild(p);
             });
             chatWindow.scrollTop = chatWindow.scrollHeight;
@@ -346,9 +347,9 @@ socket.on('group_message', (data) => {
     const chatWindow = document.getElementById("chat-window");
 
     if (currentChatGroup === data.group) {
-        const decrypted = decryptMessage(data.message);
 
         const p = document.createElement("p");
+        const decrypted = decryptMessage(data.message);
         p.innerText = `[${data.group} - ${data.from}]: ${decrypted}`;
         chatWindow.appendChild(p);
         chatWindow.scrollTop = chatWindow.scrollHeight;

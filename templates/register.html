@@ -84,6 +84,7 @@ body {
       <h2>Kayıt Ol</h2>
 
       <input type="text" id="register-username" placeholder="Kullanıcı adı">
+      <input type="email" id="register-email" placeholder="E-posta adresi">
       <input type="password" id="register-password" placeholder="Şifre">
       <input type="password" id="register-password-repeat" placeholder="Şifre (tekrar)">
       <button onclick="register()" class="login-btn">Kayıt Ol</button>
@@ -107,6 +108,7 @@ body {
       const username = document.getElementById("register-username").value;
       const password = document.getElementById("register-password").value;
       const repeat = document.getElementById("register-password-repeat").value;
+      const email = document.getElementById("register-email").value;
 
       if (password !== repeat) {
         alert("Şifreler eşleşmiyor!");
@@ -121,7 +123,7 @@ body {
       fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ username, password, email })
       })
       .then(res => res.json())
       .then(data => {
