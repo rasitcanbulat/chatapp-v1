@@ -1,4 +1,4 @@
-// Ortak gizli anahtar (örnek)
+// Gizli anahtar
 const SECRET_KEY = "J38sdf9h1!ks8LD$Xxk09g1h2@w9sdf1kq";
 
 // AES ile şifreleme
